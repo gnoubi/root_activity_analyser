@@ -81,8 +81,8 @@ list_point <- st_collection_extract(j[2,"geometry"],"POINT")
 
 #on récupère les coordonnées des points sous la forme d'une matrice
 inter <- st_coordinates(list_point)
-event_date <- inter[,"X"]
-
+#event_date <- inter[,"X"]
+event_date <- c(min(structured_data[,"date_mes"]),inter[,"X"],max(structured_data[,"date_mes"]) )
 
 
 #on affiche un plot
@@ -92,10 +92,10 @@ plot(derived[,'date_mes'], derived[,'1'], type = "n", xlim = range(x_range), yli
 lines(derived[,'date_mes'], derived[,'1'], col = "blue")
 points(inter[,"X"], inter[,"Y"], col = "red")
 
-activity_sequence <- data.frame(matrix(NA, nrow = length(event_date) - 1, ncol = 6))
+activity_sequence <- data.frame(matrix(NA, nrow = length(event_date) -1 , ncol = 6))
 colnames(activity_sequence) <- c("start","end","activity","tmax","tmin","tmean")
 
-for(i in 1:(length(event_date) - 1)){
+for(i in 1:(length(event_date) - 1 )){
   tmp <- derived[derived$date_mes >= event_date[i]  & derived$date_mes <= event_date[i + 1]  ,]
   activity_sequence[i,"start"] <- event_date[i]
   activity_sequence[i,"end"] <- event_date[i+1]
@@ -127,3 +127,22 @@ lines(derived[,'date_mes'], derived[,'1'], col = "blue")
 points(activity_sequence[,'start'], activity_sequence[,"activity"]*40, col = "green")
 points(inter[,"X"], inter[,"Y"], col = "red")
 
+
+activite_S1 <- data.frame(matrix(NA, nrow = nrow(structured_data), ncol = 5))
+colnames(activite_S1) <- c("date_mes","activite_S1","tmax","tmin","tmean")
+
+
+for(i in 1:(nrow(activite_S1))){
+  activite_S1[i,"date_mes"] <- structured_data[i,"date_mes"]
+  tmp <- activity_sequence[structured_data[i,"date_mes"] >= activity_sequence$start,]
+  tmp2 <- tmp[structured_data[i,"date_mes"] <= tmp$end,]
+  if(nrow(tmp2) == 1)
+  {
+    activite_S1[i,"activite_S1"] <-  tmp2[,"activity"]
+    activite_S1[i,"tmax"] <-  tmp2[,"tmax"]
+    activite_S1[i,"tmin"] <-  tmp2[,"tmin"]
+    activite_S1[i,"tmean"] <-  tmp2[,"tmean"]    
+  }
+}
+
+structured_data_final <- merge(structured_data, activite_S1, by="date_mes")
