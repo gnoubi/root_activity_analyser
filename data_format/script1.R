@@ -127,5 +127,3 @@ lines(derived[,'date_mes'], derived[,'1'], col = "blue")
 points(activity_sequence[,'start'], activity_sequence[,"activity"]*40, col = "green")
 points(inter[,"X"], inter[,"Y"], col = "red")
 
-a<-1
-
