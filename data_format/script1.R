@@ -56,7 +56,7 @@ lpt1[,1] <- derived[,'date_mes']
 lpt1[,2] <- derived[,'1']
 l11 = st_linestring(lpt1)
 
-
+lpts22 <- matrix(NA, nrow = 2, ncol = 2)
 #on crée la polyligne à 2 cb/jour
 lpts22[1,1]<- 0
 lpts22[1,2]<- 2
