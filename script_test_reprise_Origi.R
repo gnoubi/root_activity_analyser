@@ -547,29 +547,33 @@ for (s  in 1:443)  {
 }
 dbDisconnect(dbConnection)
 
+structured_reprise_sujet[,"date_mes_1ere_actS1"] <- format(as.POSIXct(structured_reprise_sujet[,"date_mes_1ere_actS1"], origin="1970-01-01"),"%W") 
+structured_reprise_sujet[,"date_mes_1ere_actS2"] <- format(as.POSIXct(structured_reprise_sujet[,"date_mes_1ere_actS2"], origin="1970-01-01"),"%W") 
+structured_reprise_sujet[,"date_mes_1ere_actS3"] <- format(as.POSIXct(structured_reprise_sujet[,"date_mes_1ere_actS3"], origin="1970-01-01"),"%W") 
 
 library(ggplot2)
 library(FactoMineR)
 library(factoextra)
 library(missMDA)
 
-structured_reprise_sujet[,"date_mes_1ere_actS1"] <- format(as.POSIXct(structured_reprise_sujet[,"date_mes_1ere_actS1"], origin="1970-01-01"),"%W") 
-structured_reprise_sujet[,"date_mes_1ere_actS2"] <- format(as.POSIXct(structured_reprise_sujet[,"date_mes_1ere_actS2"], origin="1970-01-01"),"%W") 
-structured_reprise_sujet[,"date_mes_1ere_actS3"] <- format(as.POSIXct(structured_reprise_sujet[,"date_mes_1ere_actS3"], origin="1970-01-01"),"%W") 
-
 Data_test_Before_clust <- subset(structured_reprise_sujet[1:200,], select = c(genre,date_activité_S1A1,date_mes_1ere_actS1,date_activité_S2A1,date_mes_1ere_actS2,date_activité_S3A1,date_mes_1ere_actS3 ))
 
 Data_test_clust <- subset(structured_reprise_sujet[1:50,], select = c(genre,date_activité_S1A1,date_activité_S2A1,date_activité_S3A1 ))
 
-#Data_test_clust[,"genre"] <- as.factor(Data_test_clust[,"genre"])
+#Data_test_clust[,"genre"] <- as.factor(Data_test_clust[,"genre"]) 
 #Data_test_clust[,"genre"] <- as.numeric(Data_test_clust[,"genre"])
 Data_test_clust[,"date_activité_S1A1"] <- as.numeric(Data_test_clust[,"date_activité_S1A1"])
 Data_test_clust[,"date_activité_S2A1"] <- as.numeric(Data_test_clust[,"date_activité_S2A1"])
 Data_test_clust[,"date_activité_S3A1"] <- as.numeric(Data_test_clust[,"date_activité_S3A1"])
+
+#Temporaire !!!! a modifier
+#Suppression des lignes avec NA
+Data_test_clust=Data_test_clust[!is.na(Data_test_clust[,'date_activité_S3A1']),]
+
 summary(Data_test_clust)
 
 #methode CAH
-clustCHA <- PCA(Data_test_clust, quali.sup = 1, ncp = 5)
+clustCHA <- MCA(Data_test_clust, quali.sup = 1, ncp = 5)
 #plot.PCA(clustCHA, choix="ind", habillage= 1 )
 clust.hcps <- HCPC(clustCHA)
 
